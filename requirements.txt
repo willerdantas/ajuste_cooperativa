@@ -1,5 +1,4 @@
 Flask==2.3.2
-sqlite3==3.35.0
 psycopg2-binary==2.9.6
 weasyprint==57.1
 Werkzeug==2.3.2
