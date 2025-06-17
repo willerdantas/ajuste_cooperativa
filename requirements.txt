@@ -4,3 +4,4 @@ weasyprint
 Werkzeug
 requests
 xlsxwriter
+gunicorn
