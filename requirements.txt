@@ -1,6 +1,6 @@
-Flask==2.3.2
-psycopg2-binary==2.9.6
-weasyprint==57.1
-Werkzeug==2.3.2
-requests==2.31.0
-xlsxwriter==3.1.2
+Flask
+psycopg2-binary
+weasyprint
+Werkzeug
+requests
+xlsxwriter
