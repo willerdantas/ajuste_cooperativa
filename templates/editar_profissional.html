@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Profissional</title>
+    <style>
+        body {
+            background: #fff;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            border: 2px solid #ccc;
+            border-radius: 12px;
+            box-sizing: border-box;
+        }
+        .container {
+            padding: 40px 20px 40px 20px;
+            max-width: 600px;
+            margin: 40px auto;
+            background: #fff;
+        }
+        h1 {
+            color: #28ba39;
+            text-shadow: 2px 2px 6px rgba(44,204,64,0.3), 0 2px 8px #ccc;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-size: 2rem;
+            margin: 0 0 32px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 18px;
+            margin-bottom: 6px;
+        }
+        input[type="text"], input[type="email"], input[type="tel"] {
+            width: 100%;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+        .submit-btn {
+            background: #28ba39;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 40px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-top: 24px;
+            cursor: pointer;
+            display: block;
+            margin-left: auto;
+        }
+        .submit-btn:hover {
+            background: #219a2e;
+        }
+        .voltar-btn {
+            position: fixed;
+            right: 32px;
+            top: 32px;
+            background: #db8504;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-weight: bold;
+            box-shadow: 2px 2px 10px rgba(255,152,0,0.2);
+            cursor: pointer;
+            z-index: 1000;
+            transition: background 0.2s;
+        }
+        .voltar-btn:hover {
+            background: #fb8c00;
+        }
+    </style>
+</head>
+<body>
+    <button class="voltar-btn" onclick="history.back()">Voltar</button>
+    <div class="container">
+        <h1>Editar Profissional</h1>
+        {% if erro %}
+            <div style="color:red; font-weight:bold; margin-bottom:16px;">{{ erro }}</div>
+        {% endif %}
+        <form method="post">
+            <label for="nome">Nome Completo</label>
+            <input type="text" id="nome" name="nome" value="{{ profissional['nome_completo'] }}" required>
+            <label for="matricula">Matrícula</label>
+            <input type="text" id="matricula" name="matricula" value="{{ profissional['matricula'] }}" required>
+            <label for="celular">Celular</label>
+            <input type="tel" id="celular" name="celular" value="{{ profissional['celular'] }}" required>
+            <label for="email">E-mail</label>
+            <input type="email" id="email" name="email" value="{{ profissional['email'] }}" required>
+            <label for="cooperativa_id">Cooperativa</label>
+            <input type="text" id="cooperativa_id" name="cooperativa_id" value="{{ profissional['cooperativa_nome'] }}" required readonly>
+            <label for="categoria_id">Categoria Profissional</label>
+            <input type="text" id="categoria_id" name="categoria_id" value="{{ profissional['categoria_nome'] }}" required readonly>
+            <button type="submit" class="submit-btn">Salvar</button>
+        </form>
+    </div>
+</body>
+</html>

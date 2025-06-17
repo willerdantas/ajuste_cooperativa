@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Visualizar Banco</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #fff; margin: 0; padding: 24px; }
+        h2 { color: #28ba39; margin-top: 32px; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 32px; }
+        th, td { border: 1px solid #ccc; padding: 8px 12px; }
+        th { background: #f4f4f4; }
+        .logo-img { max-height: 40px; max-width: 80px; border-radius: 6px; }
+    </style>
+</head>
+<body>
+    <h1>Visualização do Banco de Dados</h1>
+
+    <h2>Cooperativas</h2>
+    <table>
+        <tr>
+            {% for col in cooperativas[0].keys() if cooperativas %}
+            <th>{{ col }}</th>
+            {% endfor %}
+        </tr>
+        {% for row in cooperativas %}
+        <tr>
+            {% for col, value in row.items() %}
+                {% if col == "logo" %}
+                    <td>
+                        {% if value %}
+                            <img src="{{ url_for('static', filename='logos/' ~ value) }}" class="logo-img" onerror="this.style.display='none'">
+                        {% else %}
+                            <!-- Sem logo -->
+                        {% endif %}
+                    </td>
+                {% else %}
+                    <td>{{ value }}</td>
+                {% endif %}
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Usuários</h2>
+    <table>
+        <tr>
+            {% for col in usuarios[0].keys() if usuarios %}
+            <th>{{ col }}</th>
+            {% endfor %}
+        </tr>
+        {% for row in usuarios %}
+        <tr>
+            {% for value in row %}
+            <td>{{ value }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Profissionais</h2>
+    <table>
+        <tr>
+            {% for col in profissionais[0].keys() if profissionais %}
+            <th>{{ col }}</th>
+            {% endfor %}
+        </tr>
+        {% for row in profissionais %}
+        <tr>
+            {% for value in row %}
+            <td>{{ value }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

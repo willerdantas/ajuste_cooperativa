@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de Justificativa de Plantão</title>
+    <style>
+        body {
+            background: #fff;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            border: 2px solid #ccc;
+            border-radius: 12px;
+            box-sizing: border-box;
+        }
+        .container {
+            padding: 40px 60px 0 60px;
+            max-width: 100%;
+        }
+        h1 {
+            color: #28ba39;
+            text-shadow: 2px 2px 6px rgba(44,204,64,0.3), 0 2px 8px #ccc;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-size: 2.5rem;
+            margin: 40px 0 0 0;
+            text-align: center;
+            font-weight: bold;
+        }
+        .cooperativa-list {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            justify-content: center; /* Changed from flex-start to center */
+            align-items: center; /* Ensure horizontal centering */
+            margin: 60px auto 0 auto;
+            max-width: 420px;
+        }
+        .cooperativa-card {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            background: #f8f8f8;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 14px 24px;
+            cursor: pointer;
+            transition: box-shadow 0.2s;
+            min-width: 220px;
+            max-width: 520px;
+            margin: 0 auto;
+            white-space: nowrap;
+        }
+        .cooperativa-card:hover {
+            box-shadow: 0 4px 16px rgba(44,204,64,0.12);
+            background: #f3fff3;
+        }
+        .cooperativa-logo {
+            height: 64px;
+            width: 120px;
+            max-width: 120px;
+            max-height: 64px;
+            min-width: 64px;
+            min-height: 40px;
+            margin-right: 18px;
+            border-radius: 10px;
+            background: #fff;
+            object-fit: contain;
+            display: block;
+        }
+        .cooperativa-nome, .cooperativa-categoria {
+            font-weight: bold;
+            font-size: 1.1rem;
+            text-align: left;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+        .cooperativa-nome {
+            color: #28ba39;
+        }
+        .cooperativa-categoria {
+            color: #888;
+            font-weight: bold;
+        }
+        .btn-entrar {
+            display: block;
+            margin: 40px 0 0 auto;
+            padding: 12px 32px;
+            background: #db8504;
+            color: #fff;
+            font-size: 1.1rem;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 2px 2px 10px rgba(255,152,0,0.2), 0 2px 8px #ccc;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+            max-width: 100%;
+        }
+        .btn-entrar:hover {
+            background: #fb8c00;
+        }
+        .main-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        .left-panel {
+            width: 30%;
+            padding: 20px;
+            background: #f4f4f4;
+            border-right: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        .right-panel {
+            width: 70%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .search-bar {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+        .justificativa-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 300px; /* Define a maximum height for the list */
+            overflow-y: auto; /* Add vertical scrollbar if content exceeds max height */
+            border: 1px solid #ccc; /* Same border as the links */
+            border-radius: 10px; /* Rounded corners for the list */
+            background: #f9f9f9;
+            box-shadow: 0 4px 16px rgba(44,204,64,0.12); /* Same shadow as the links */
+        }
+        .justificativa-item {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            border-radius: 6px; /* Rounded corners for each item */
+            margin-bottom: 10px;
+            background: #fff;
+        }
+        .justificativa-item:last-child {
+            margin-bottom: 0; /* Remove margin for the last item */
+            border-bottom: none; /* Remove bottom border for the last item */
+        }
+    </style>
+    <script>
+        function irParaJustificativa(cooperativaId) {
+            window.location.href = '/formulario_justificativa/' + cooperativaId;
+        }
+
+        let selectedProfissionalId = null;
+
+        function buscarProfissionais(query) {
+            if (query.length >= 5) {
+                fetch(`/buscar_profissionais?query=${query}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const list = document.getElementById('profissionaisList');
+                        list.innerHTML = '';
+                        data.forEach(profissional => {
+                            const item = document.createElement('li');
+                            item.textContent = profissional.nome_completo;
+                            item.className = 'justificativa-item';
+                            item.onclick = () => selecionarProfissional(profissional.id);
+                            list.appendChild(item);
+                        });
+                    });
+            }
+        }
+
+        function limparPesquisa() {
+            document.querySelector('.search-bar').value = '';
+            document.getElementById('profissionaisList').innerHTML = '';
+            document.getElementById('justificativasList').innerHTML = '';
+        }
+
+        function selecionarProfissional(profissionalId) {
+            selectedProfissionalId = profissionalId;
+            fetch(`/justificativas_profissional/${profissionalId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const list = document.getElementById('justificativasList');
+                    list.innerHTML = '';
+                    data.forEach(justificativa => {
+                        const item = document.createElement('li');
+                        item.className = 'justificativa-item';
+                        item.innerHTML = `
+                            Data: ${justificativa.data_ocorrencia} 
+                            <span style="center: 10px; font-weight: bold; color: ${justificativa.status === 'Aprovada' ? '#28ba39' : justificativa.status === 'Negada' ? '#d9534f' : '#f0ad4e'};">
+                                ${justificativa.status}
+                            </span>
+                            <button onclick="visualizarJustificativa(${justificativa.id})" style="margin-left: 10px; padding: 5px 10px; background: #28ba39; color: #fff; border: none; border-radius: 4px; cursor: pointer;">
+                                Visualizar
+                            </button>
+                        `;
+                        list.appendChild(item);
+                    });
+                });
+        }
+
+        function visualizarJustificativa(justificativaId) {
+            window.open(`/visualizar_justificativa/${justificativaId}`, '_blank');
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Sistema de Justificativa de Plantão</h1>
+        <button type="button" class="btn-entrar" id="btnEntrar">Entrar</button>
+        <div class="main-container">
+            <div class="left-panel">
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <input type="text" class="search-bar" placeholder="Digite 5 caracteres para buscar..." oninput="buscarProfissionais(this.value)">
+                    <button onclick="limparPesquisa()" style="padding: 10px; background: #d9534f; color: #fff; border: none; border-radius: 6px; cursor: pointer;">
+                        Limpar
+                    </button>
+                </div>
+                <ul id="profissionaisList" class="justificativa-list"></ul>
+                <ul id="justificativasList" class="justificativa-list"></ul>
+            </div>
+            <div class="right-panel">
+                <div class="cooperativa-list">
+                    {% for cooperativa in cooperativas %}
+                    <div class="cooperativa-card" onclick="irParaJustificativa('{{ cooperativa.id }}')">
+                        <img src="{{ cooperativa.logo_url }}" alt="Logo {{ cooperativa.nome_fantasia }}" class="cooperativa-logo">
+                        <span class="cooperativa-nome">{{ cooperativa.nome_fantasia }}</span>
+                        <span class="cooperativa-categoria">{{ cooperativa.categoria }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="popupLogin" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.35);z-index:2000;align-items:center;justify-content:center;">
+        <div style="background:#fff;border-radius:10px;padding:32px 24px;max-width:340px;margin:auto;box-shadow:0 4px 24px #888;">
+            <h3 style="color:#28ba39;text-align:center;margin-top:0;">Login</h3>
+            <form id="formLogin" method="post" action="/login" autocomplete="off">
+                <label for="usuario" style="font-weight:bold;">Usuário</label>
+                <input type="text" id="usuario" name="usuario" required style="width:100%;margin-bottom:12px;">
+                <label for="senha" style="font-weight:bold;">Senha</label>
+                <input type="password" id="senha" name="senha" required style="width:100%;margin-bottom:18px;">
+                <div style="display:flex;justify-content:flex-end;gap:12px;">
+                    <button type="button" onclick="fecharPopupLogin()" style="background:#ccc;color:#333;padding:8px 18px;border:none;border-radius:6px;font-weight:bold;cursor:pointer;">Cancelar</button>
+                    <button type="submit" style="background:#28ba39;color:#fff;padding:8px 18px;border:none;border-radius:6px;font-weight:bold;cursor:pointer;">Entrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.getElementById('btnEntrar').onclick = function() {
+            document.getElementById('popupLogin').style.display = 'flex';
+        };
+        function fecharPopupLogin() {
+            document.getElementById('popupLogin').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

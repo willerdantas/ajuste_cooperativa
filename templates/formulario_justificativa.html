@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulário de Justificativa</title>
+    <style>
+        body {
+            background: #fff;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            border: 2px solid #ccc;
+            border-radius: 12px;
+            box-sizing: border-box;
+        }
+        .container {
+            padding: 40px 60px 40px 60px;
+            max-width: 600px;
+            margin: 40px auto;
+            background: #fff;
+        }
+        .header-coop {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+        .header-coop img {
+            height: 200px;
+            width: 360px;
+            max-width: 360px;
+            max-height: 130px;
+            min-width: 160px;
+            min-height: 120px;
+            border-radius: 10px;
+            background: #fff;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+        }
+        .header-coop .nome-fantasia {
+            font-weight: bold;
+            color: #28ba39;
+            font-size: 1.3rem;
+            text-align: center;
+            margin-top: 6px;
+        }
+        .row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 18px;
+            margin-bottom: 6px;
+        }
+        input[type="text"], input[type="email"], input[type="tel"], input[type="date"], input[type="time"], select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+        input[readonly] {
+            background: #f4f4f4;
+        }
+        .textarea-ajustavel {
+            width: 100%;
+            min-height: 60px;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+            resize: none;
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+        .submit-btn {
+            background: #28ba39;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 40px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-top: 24px;
+            cursor: pointer;
+            display: block;
+            margin-left: auto;
+        }
+        .submit-btn:hover {
+            background: #219a2e;
+        }
+        .voltar-btn {
+            position: fixed;
+            right: 32px;
+            top: 32px;
+            background: #db8504;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-weight: bold;
+            box-shadow: 2px 2px 10px rgba(255,152,0,0.2);
+            cursor: pointer;
+            z-index: 1000;
+            transition: background 0.2s;
+        }
+        .voltar-btn:hover {
+            background: #c97c04;
+        }
+    </style>
+    <script>
+        function ajustarTextarea(el) {
+            el.style.height = "auto";
+            el.style.height = (el.scrollHeight) + "px";
+        }
+        window.onload = function() {
+            var ta = document.getElementById('justificativa');
+            if (ta) ajustarTextarea(ta);
+        }
+    </script>
+</head>
+<body>
+    <button class="voltar-btn voltar-top" onclick="window.location.href='/'">Voltar</button>
+    <div class="container">
+        <h1 style="color:#28ba39;text-align:center;font-weight:bold;margin-bottom:24px;text-shadow:2px 2px 6px rgba(44,204,64,0.3),0 2px 8px #ccc;">
+            Formulário de Justificativa
+        </h1>
+        <div class="header-coop">
+            <img src="{{ logo_url }}" alt="Logo Cooperativa">
+            <span class="nome-fantasia">{{ nome_fantasia }}</span>
+        </div>
+        <form method="post" enctype="multipart/form-data" id="formJustificativa">
+            <label>Data/Hora do Preenchimento</label>
+            <input type="text" value="{{ datahora_preenchimento }}" readonly>
+
+            <div class="row">
+                <div style="flex:2;">
+                    <label for="data_ocorrencia">Data da Ocorrência</label>
+                    <input type="date" id="data_ocorrencia" name="data_ocorrencia" required>
+                </div>
+                <div style="flex:1;">
+                    <label for="inicio_plantao">Início do Plantão</label>
+                    <input type="time" id="inicio_plantao" name="inicio_plantao" required>
+                </div>
+                <div style="flex:1;">
+                    <label for="fim_plantao">Fim do Plantão</label>
+                    <input type="time" id="fim_plantao" name="fim_plantao" required>
+                </div>
+            </div>
+
+            <label for="profissional">Nome</label>
+            <select id="profissional" name="profissional" required>
+                <option value="" selected disabled>Selecione um nome</option>
+                {% for profissional in profissionais %}
+                <option value="{{ profissional.id }}">{{ profissional.nome_completo }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="categoria_profissional">Categoria Profissional</label>
+            <input type="text" id="categoria_profissional" name="categoria_profissional" value="{{ categoria_profissional }}" readonly>
+
+            <label for="justificativa">Justificativa</label>
+            <textarea id="justificativa" name="justificativa" class="textarea-ajustavel" oninput="ajustarTextarea(this)" required></textarea>
+
+            <label for="ocorrencia">Carregar Ocorrência</label>
+            <input type="file" id="ocorrencia" name="ocorrencia" accept="image/*,application/pdf">
+
+            <div style="display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 16px;">
+                {% if mensagem %}
+                    <span style="color:green; font-weight:bold; margin-bottom:0; text-align:left;">{{ mensagem }}</span>
+                {% endif %}
+                <button type="submit" class="submit-btn">Salvar</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        // Atualiza categoria profissional ao trocar profissional
+        document.addEventListener('DOMContentLoaded', function() {
+            var selectProf = document.getElementById('profissional');
+            var inputCat = document.getElementById('categoria_profissional');
+            if (selectProf && inputCat && window.profissionaisCategorias) {
+                selectProf.addEventListener('change', function() {
+                    var cat = window.profissionaisCategorias[this.value];
+                    inputCat.value = cat || '';
+                });
+                // Inicializa ao carregar
+                var cat = window.profissionaisCategorias[selectProf.value];
+                inputCat.value = cat || '';
+            }
+        });
+    </script>
+    {% if mensagem %}
+    <script>
+        window.onload = function() {
+            alert("{{ mensagem }}");
+            window.location.href = "/"; // Redireciona após salvar
+        }
+    </script>
+    {% endif %}
+    {% if mensagem %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('formJustificativa').reset();
+            var inputCat = document.getElementById('categoria_profissional');
+            if (inputCat) inputCat.value = '';
+        });
+    </script>
+    {% endif %}
+    <!-- Remova ou comente o script abaixo para permitir o submit normal do formulário -->
+{# 
+<script>
+    document.getElementById('formJustificativa').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent default form submission
+        var form = this;
+
+        // Simulate form submission (replace with actual submission logic if needed)
+        setTimeout(function() {
+            alert("Justificativa salva com sucesso!");
+            window.location.href = "/"; // Redirect to the homepage
+        }, 500);
+    });
+</script>
+#}
+</body>
+</html>

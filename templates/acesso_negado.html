@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Acesso Negado</title>
+    <style>
+        #popup-acesso-negado {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.35);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #popup-acesso-negado .popup-content {
+            background: #fff;
+            border-radius: 10px;
+            padding: 32px 40px;
+            box-shadow: 0 4px 24px #888;
+            text-align: center;
+            min-width: 260px;
+        }
+        #popup-acesso-negado button {
+            margin-top: 18px;
+            background: #db8504;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 28px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        #popup-acesso-negado button:hover {
+            background: #c97c04;
+        }
+    </style>
+</head>
+<body>
+    <div id="popup-acesso-negado">
+        <div class="popup-content">
+            <h2 style="color:#c0392b;margin-bottom:18px;">Acesso Negado</h2>
+            <p>Você não tem permissão para acessar esta página.</p>
+            <button onclick="fecharAcessoNegado()">Fechar</button>
+        </div>
+    </div>
+    <script>
+        function fecharAcessoNegado() {
+            // Fecha o popup e volta para a página anterior, se possível
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "/";
+            }
+        }
+    </script>
+</body>
+</html>

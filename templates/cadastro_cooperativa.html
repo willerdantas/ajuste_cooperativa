@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Cooperativa</title>
+    <style>
+        body {
+            background: #fff;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            border: 2px solid #ccc;
+            border-radius: 12px;
+            box-sizing: border-box;
+        }
+        .container {
+            padding: 40px 20px 40px 20px;
+            max-width: 1000px;
+            margin: 40px auto;
+            background: #fff;
+        }
+        h1 {
+            color: #28ba39;
+            text-shadow: 2px 2px 6px rgba(44,204,64,0.3), 0 2px 8px #ccc;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-size: 2rem;
+            margin: 0 0 32px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+        h2 {
+            color: #28ba39;
+            text-shadow: 2px 2px 6px rgba(44,204,64,0.3), 0 2px 8px #ccc;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-size: 2rem;
+            margin: 40px 0 40px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 18px;
+            margin-bottom: 6px;
+        }
+        input[type="text"], input[type="email"], input[type="tel"], input[type="date"] {
+            width: 100%;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+        .categorias-list, .periodos-list {
+            margin-bottom: 12px;
+        }
+        .add-btn {
+            background: #db8504;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 6px;
+            margin-bottom: 8px;
+        }
+        .add-btn:hover {
+            background: #fb8c00;
+        }
+        .remove-btn {
+            background: #c0392b;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 2px 10px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+        .remove-btn:hover {
+            background: #e74c3c;
+        }
+        .periodo-fields {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+        .periodo-fields input[type="text"] {
+            flex: 2;
+        }
+        .periodo-fields input[type="date"] {
+            flex: 1;
+        }
+        .submit-btn {
+            background: #28ba39;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 40px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-top: 24px;
+            cursor: pointer;
+            display: block;
+            margin-left: auto;
+        }
+        .submit-btn:hover {
+            background: #219a2e;
+        }
+        .voltar-btn {
+            position: fixed;
+            right: 32px;
+            background: #db8504;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-weight: bold;
+            box-shadow: 2px 2px 10px rgba(255,152,0,0.2);
+            cursor: pointer;
+            z-index: 1000;
+            transition: background 0.2s;
+        }
+        .voltar-btn:hover {
+            background: #fb8c00;
+        }
+        .voltar-top {
+            top: 32px;
+        }
+        .search-bar-container {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-bottom: 32px;
+            gap: 12px;
+        }
+        .search-bar {
+            flex: 1;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+        }
+        .novo-btn {
+            background: #28ba39;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 28px;
+            font-size: 1rem;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .novo-btn:hover {
+            background: #219a2e;
+        }
+        .cooperativa-table {
+            width: 100%;
+            min-width: 700px;
+            max-width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 12px;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 4px 18px rgba(44,204,64,0.10), 0 2px 8px #ccc;
+            background: #fff;
+            table-layout: fixed;
+        }
+        .cooperativa-table th, .cooperativa-table td {
+            border: none;
+            padding: 16px 13px;
+            text-align: left;
+            word-break: break-word;
+            white-space: pre-line;
+            vertical-align: middle;
+            /* Garante largura para categoria */
+        }
+        .cooperativa-table td.categoria-col {
+            max-width: 250px;
+            min-width: 120px;
+        }
+        .cooperativa-table td img {
+            display: block;
+            margin: 0 auto;
+            max-height: 60px;
+            max-width: 120px;
+            width: auto;
+            height: auto;
+            border-radius: 10px;
+            background: #fff;
+            object-fit: contain;
+        }
+        .cooperativa-table th {
+            background: #e8f5e9;
+            font-weight: bold;
+        }
+        .cooperativa-table tbody tr {
+            transition: background 0.2s;
+        }
+        .cooperativa-table tbody tr:hover {
+            background: #f1f8e9;
+        }
+        .cooperativa-table tr:first-child th:first-child {
+            border-top-left-radius: 14px;
+        }
+        .cooperativa-table tr:first-child th:last-child {
+            border-top-right-radius: 14px;
+        }
+        .cooperativa-table tr:last-child td:first-child {
+            border-bottom-left-radius: 14px;
+        }
+        .cooperativa-table tr:last-child td:last-child {
+            border-bottom-right-radius: 14px;
+        }
+    </style>
+    <script>
+        function addCategoria() {
+            const input = document.getElementById('categoria-input');
+            const value = input.value.trim();
+            if (value) {
+                const list = document.getElementById('categorias-list');
+                const item = document.createElement('div');
+                item.textContent = value;
+                item.style.display = 'inline-block';
+                item.style.marginRight = '8px';
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.textContent = 'x';
+                btn.className = 'remove-btn';
+                btn.onclick = function() { list.removeChild(item); };
+                item.appendChild(btn);
+
+                // hidden input for form submission
+                const hidden = document.createElement('input');
+                hidden.type = 'hidden';
+                hidden.name = 'categorias[]';
+                hidden.value = value;
+                item.appendChild(hidden);
+
+                list.appendChild(item);
+                input.value = '';
+            }
+        }
+        function addPeriodo() {
+            const desc = document.getElementById('periodo-desc').value.trim();
+            const inicio = document.getElementById('periodo-inicio').value;
+            const fim = document.getElementById('periodo-fim').value;
+            if (desc && inicio && fim) {
+                const list = document.getElementById('periodos-list');
+                const wrapper = document.createElement('div');
+                wrapper.className = 'periodo-fields';
+
+                const descInput = document.createElement('input');
+                descInput.type = 'text';
+                descInput.value = desc;
+                descInput.readOnly = true;
+                descInput.name = 'periodos_desc[]';
+
+                const inicioInput = document.createElement('input');
+                inicioInput.type = 'date';
+                inicioInput.value = inicio;
+                inicioInput.readOnly = true;
+                inicioInput.name = 'periodos_inicio[]';
+
+                const fimInput = document.createElement('input');
+                fimInput.type = 'date';
+                fimInput.value = fim;
+                fimInput.readOnly = true;
+                fimInput.name = 'periodos_fim[]';
+
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.textContent = 'x';
+                btn.className = 'remove-btn';
+                btn.onclick = function() { list.removeChild(wrapper); };
+
+                wrapper.appendChild(descInput);
+                wrapper.appendChild(inicioInput);
+                wrapper.appendChild(fimInput);
+                wrapper.appendChild(btn);
+
+                list.appendChild(wrapper);
+
+                document.getElementById('periodo-desc').value = '';
+                document.getElementById('periodo-inicio').value = '';
+                document.getElementById('periodo-fim').value = '';
+            }
+        }
+        function filtrarCooperativas() {
+            var input = document.getElementById("searchInput");
+            var filter = input.value.toLowerCase();
+            var table = document.getElementById("cooperativasTable");
+            var trs = table.getElementsByTagName("tr");
+            for (var i = 1; i < trs.length; i++) {
+                var tds = trs[i].getElementsByTagName("td");
+                var found = false;
+                for (var j = 0; j < tds.length; j++) {
+                    if (tds[j].textContent.toLowerCase().indexOf(filter) > -1) {
+                        found = true;
+                        break;
+                    }
+                }
+                trs[i].style.display = found ? "" : "none";
+            }
+        }
+    </script>
+</head>
+<body>
+    <button class="voltar-btn voltar-top" onclick="window.location.href='/cadastro'">Voltar</button>
+    <div class="container">
+        <h1>Sistema de Justificativa de Plantão de Cooperativa</h1>
+        <h2>Cadastro de Cooperativa</h2>
+        <div class="search-bar-container">
+            <input type="text" id="searchInput" class="search-bar" placeholder="Pesquisar cooperativa..." onkeyup="filtrarCooperativas()">
+            <form action="/nova_cooperativa" method="get" style="margin:0;">
+                <button type="submit" class="novo-btn">Nova Cooperativa</button>
+            </form>
+        </div>
+        <table class="cooperativa-table" id="cooperativasTable">
+            <thead>
+                <tr>
+                    <th>Logo</th>
+                    <th>Nome Fantasia</th>
+                    <th>Categoria Profissional</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cooperativa in cooperativas %}
+                <tr>
+                    <td>
+                        <img src="{{ cooperativa.logo_url }}" alt="Logo {{ cooperativa.nome_fantasia }}">
+                    </td>
+                    <td>{{ cooperativa.nome_fantasia }}</td>
+                    <td class="categoria-col">
+                        {{ cooperativa.categoria }}
+                    </td>
+                    <td>
+                        <form action="/editar_cooperativa/{{ cooperativa.id }}" method="get" style="display:inline;">
+                            <button type="submit" class="add-btn" style="padding:6px 18px;">Editar</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

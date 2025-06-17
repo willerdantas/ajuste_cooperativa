@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Área do Preposto</title>
+    <style>
+        body {
+            background: #fff;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            border: 2px solid #ccc;
+            border-radius: 12px;
+            box-sizing: border-box;
+        }
+        .container {
+            padding: 40px 20px 40px 20px;
+            max-width: 1200px;
+            margin: 40px auto;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #28ba39;
+            text-shadow: 2px 2px 6px rgba(44,204,64,0.3), 0 2px 8px #ccc;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-size: 2rem;
+            margin: 0 0 32px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+        h2 {
+            color: #28ba39;
+            text-shadow: 2px 2px 6px rgba(44,204,64,0.3), 0 2px 8px #ccc;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-size: 2rem;
+            margin: 40px 0 40px 0;
+            text-align: left;
+            font-weight: bold;
+        }
+        .panel-title {
+            color: #28ba39;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 18px;
+            text-align: left;
+        }
+        .search-bar-container {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .search-bar {
+            flex: 1;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+        }
+        .date-filter {
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+            width: 120px;
+        }
+        .list-content {
+            min-height: 120px;
+            background: #fff;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            padding: 12px;
+            overflow-y: auto;
+            max-height: 320px;
+            width: 200%;
+            min-width: 0;
+            display: flex;
+            justify-content: center;
+        }
+        .voltar-btn {
+            position: fixed;
+            right: 32px;
+            top: 32px;
+            background: #db8504;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-weight: bold;
+            box-shadow: 2px 2px 10px rgba(255,152,0,0.2);
+            cursor: pointer;
+            z-index: 1000;
+            transition: background 0.2s;
+        }
+        .voltar-btn:hover {
+            background: #fb8c00;
+        }
+        #tabelaJustificativasPreposto th, #tabelaJustificativasPreposto td {
+            font-size: 1rem;
+            padding: 12px 8px;
+            vertical-align: top;
+            word-break: break-word;
+            white-space: pre-line;
+        }
+        #tabelaJustificativasPreposto td.nome-profissional {
+            max-width: 120px;
+            white-space: pre-line;
+            word-break: break-word;
+        }
+        #tabelaJustificativasPreposto {
+            width: 100%;
+            max-width: 1500px;
+            min-width: 0;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <button class="voltar-btn" onclick="history.back()">Voltar</button>
+    <div class="container">
+        <h1>Sistema de Justificativa de Plantão de Cooperativa</h1>
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 524px;">
+            <h2>Área do Preposto</h2>
+            <div style="background:#f8f8f8; border-radius:12px; box-shadow:0 2px 8px #eee; padding:32px 24px; min-width:180px; text-align:center;">
+                <div style="font-size:1.2rem; color:#28ba39; font-weight:bold; margin-bottom:12px;">Total de Justificativas</div>
+                <div id="totalJustificativasQuadro" style="font-size:2.5rem; color:#333; font-weight:bold;">
+                    {{ justificativas|length }}
+                </div>
+            </div>
+        </div>
+        <hr style="width:100%;margin:32px 0 32px 0;border:0;height:0;box-shadow:0 4px 12px -4px #bbb;">
+        <div style="background: #f4f4f4; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); margin-bottom: 32px; max-width: 1200px; width: 100%; margin-left: auto; margin-right: auto;">
+            <div class="panel-title" style="margin-bottom: 16px;">Justificativas</div>
+            <div class="search-bar-container">
+                <input type="text" class="search-bar" id="searchJust" placeholder="Pesquisar justificativa..." onkeyup="filtrarJustificativasPreposto()">
+                <input type="date" class="date-filter" id="dataInicioJust" placeholder="Data inicial" onchange="filtrarJustificativasPreposto()">
+                <input type="date" class="date-filter" id="dataFimJust" placeholder="Data final" onchange="filtrarJustificativasPreposto()">
+            </div>
+            <div class="list-content" style="max-height: 320px; overflow-y: auto; width: 100%; display: flex; justify-content: center; overflow-x: auto;">
+                <table id="tabelaJustificativasPreposto" style="border-collapse: collapse; width: 100%;">
+                    <thead style="position: sticky; top: 0; background: #f9f9f9; z-index: 1;">
+                        <tr>
+                            <th>Ajuste</th>
+                            <th>Matrícula</th>
+                            <th>Nome</th>
+                            <th>Categoria</th>
+                            <th>Data/Hora Preenchimento</th>
+                            <th>Data Ocorrência</th>
+                            <th>Início Plantão</th>
+                            <th>Fim Plantão</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for j in justificativas %}
+                        <tr>
+                            <td style="text-align:center; vertical-align:middle;">
+                                {% if j.ajuste_datahora %}
+                                    <div style="font-size:0.8em;color:#888;">{{ j.ajuste_datahora }}</div>
+                                {% elif j.autorizacao == 1 %}
+                                    <input type="checkbox" data-id="{{ j.id }}" onchange="registrarAjuste(this.dataset.id, this)">
+                                {% else %}
+                                    <!-- Espaço vazio para negadas e pendentes -->
+                                {% endif %}
+                            </td>
+                            <td style="vertical-align:middle;">{{ j.matricula }}</td>
+                            <td class="nome-profissional" style="white-space:pre-line;word-break:break-word; vertical-align:middle;">{{ j.nome_completo }}</td>
+                            <td style="vertical-align:middle;">{{ j.categoria_profissional }}</td>
+                            <td style="vertical-align:middle;">{{ j.datahora_preenchimento }}</td>
+                            <td style="vertical-align:middle;">{{ j.data_ocorrencia }}</td>
+                            <td style="vertical-align:middle;">{{ j.inicio_plantao }}</td>
+                            <td style="vertical-align:middle;">{{ j.fim_plantao }}</td>
+                            <td style="vertical-align:middle;">
+                                {% if j.autorizacao == 1 %}
+                                    <span style="color: #28ba39; font-weight: bold;">Autorizado</span>
+                                {% elif j.autorizacao == 0 %}
+                                    <span style="color: #c0392b; font-weight: bold;">Negado</span>
+                                {% else %}
+                                    <span style="color: #db8504; font-weight: bold;">Pendente</span>
+                                {% endif %}
+                            </td>
+                            <td style="text-align:center; vertical-align:middle;">
+                                <a href="{{ url_for('visualizar_justificativa', justificativa_id=j.id) }}" target="_blank"
+                                   style="background:#db8504;color:#fff;padding:3px 10px;border-radius:6px;text-decoration:none;font-weight:bold;display:inline-flex;align-items:center;justify-content:center;font-size:1.2rem;line-height:1.1;"
+                                   title="Visualizar">
+                                    &#128065;
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div style="background: #f4f4f4; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); margin-bottom: 32px; max-width: 1200px; width: 100%; margin-left: auto; margin-right: auto;">
+            <div class="panel-title" style="margin-bottom: 16px;">Resumo</div>
+            <div style="display: flex; gap: 32px;">
+                <!-- Lado Esquerdo: Lista de Profissionais -->
+                <div style="flex: 1;">
+                    <div class="list-content" style="max-height: 320px; overflow-y: auto; background: #fff; border-radius: 8px; padding: 12px; border: 1px solid #e0e0e0; width: 100%;">
+                        <table style="width:100%; border-collapse:collapse;">
+                            <thead>
+                                <tr>
+                                    <th style="text-align:center;">Nome</th>
+                                    <th style="text-align:center;">Categoria</th>
+                                    <th style="text-align:center;">Cooperativa</th>
+                                    <th style="text-align:center; color:#28ba39;">Autorizadas</th>
+                                    <th style="text-align:center; color:#c0392b;">Negadas</th>
+                                    <th style="text-align:center;">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyResumoProfissionais">
+                                {% for nome, dados in resumo.items() %}
+                                <tr>
+                                    <td style="text-align:center;">{{ nome }}</td>
+                                    <td style="text-align:center;">{{ dados.categoria }}</td>
+                                    <td style="text-align:center;">{{ dados.cooperativa }}</td>
+                                    <td style="text-align:center; color:#28ba39;">{{ dados.autorizadas }}</td>
+                                    <td style="text-align:center; color:#c0392b;">{{ dados.negadas }}</td>
+                                    <td style="text-align:center;">{{ dados.total }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <form action="{{ url_for('gerar_relatorio_resumo') }}" method="get">
+                    <button type="submit" style="background:#28ba39;color:#fff;padding:12px 24px;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">
+                        Gerar Relatório XLSX
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div style="background: #f4f4f4; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); margin-bottom: 32px; max-width: 1200px; width: 100%; margin-left: auto; margin-right: auto;">
+            <div class="panel-title" style="margin-bottom: 16px;">Gerar Relatório</div>
+            <form id="formRelatorio" target="_blank" action="{{ url_for('relatorio_justificativas') }}" method="get" style="display: flex; gap: 16px; align-items: flex-end;">
+                <div>
+                    <label for="data_inicio" style="font-weight:bold;">Data início</label>
+                    <input type="date" id="data_inicio" name="data_inicio" required style="padding:6px;border-radius:6px;border:1px solid #ccc;">
+                </div>
+                <div>
+                    <label for="data_fim" style="font-weight:bold;">Data fim</label>
+                    <input type="date" id="data_fim" name="data_fim" required style="padding:6px;border-radius:6px;border:1px solid #ccc;">
+                </div>
+                <button type="submit" style="background:#28ba39;color:#fff;padding:10px 28px;border:none;border-radius:8px;font-weight:bold;font-size:1rem;cursor:pointer;">
+                    Gerar Relatório
+                </button>
+            </form>
+        </div>
+        <hr style="width:100%;margin:32px 0 32px 0;border:0;height:0;box-shadow:0 4px 12px -4px #bbb;">
+        <script>
+            function registrarAjuste(id, checkbox) {
+                if (checkbox.checked) {
+                    fetch('/ajustar_justificativa/' + id, {method: 'POST'})
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.datahora) {
+                                // Substitui a checkbox pelo horário
+                                var div = document.createElement('div');
+                                div.style.fontSize = '0.8em';
+                                div.style.color = '#888';
+                                div.textContent = data.datahora;
+                                checkbox.parentNode.replaceChild(div, checkbox);
+                            }
+                        });
+                }
+            }
+
+            // Filtro de justificativas (corrigido para dd/mm/aaaa)
+            function filtrarJustificativasPreposto() {
+                var input = document.getElementById('searchJust').value.toLowerCase();
+                var dataInicial = document.getElementById('dataInicioJust').value;
+                var dataFinal = document.getElementById('dataFimJust').value;
+                var table = document.getElementById('tabelaJustificativasPreposto');
+                var trs = table.getElementsByTagName("tr");
+                for (var i = 1; i < trs.length; i++) {
+                    var tds = trs[i].getElementsByTagName("td");
+                    var found = false;
+                    // Pesquisa textual
+                    for (var j = 0; j < tds.length - 1; j++) {
+                        if (tds[j].textContent.toLowerCase().indexOf(input) > -1) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    // Filtro por data (corrigido para dd/mm/aaaa)
+                    var dataOcorrencia = tds[5].textContent.trim();
+                    var mostra = found;
+
+                    function parseDataBR(str) {
+                        var p = str.split('/');
+                        if (p.length === 3) {
+                            return new Date(p[2], p[1] - 1, p[0]);
+                        }
+                        return null;
+                    }
+
+                    var dataOcorrenciaDate = parseDataBR(dataOcorrencia);
+                    var dataInicialDate = dataInicial ? new Date(dataInicial) : null;
+                    var dataFinalDate = dataFinal ? new Date(dataFinal) : null;
+
+                    if (dataInicialDate && dataOcorrenciaDate) {
+                        mostra = mostra && (dataOcorrenciaDate >= dataInicialDate);
+                    }
+                    if (dataFinalDate && dataOcorrenciaDate) {
+                        mostra = mostra && (dataOcorrenciaDate <= dataFinalDate);
+                    }
+                    trs[i].style.display = mostra ? "" : "none";
+                }
+            }
+
+            // Garante que todas as justificativas (autorizadas, negadas e pendentes) aparecem
+            document.addEventListener('DOMContentLoaded', function() {
+                filtrarJustificativasPreposto();
+            });
+        </script>
+    </div>
+</body>
+</html>

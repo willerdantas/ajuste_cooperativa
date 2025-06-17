@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Usuário</title>
+    <style>
+        body {
+            background: #fff;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            border: 2px solid #ccc;
+            border-radius: 12px;
+            box-sizing: border-box;
+        }
+        .container {
+            padding: 40px 20px 40px 20px;
+            max-width: 600px;
+            margin: 40px auto;
+            background: #fff;
+        }
+        h1 {
+            color: #28ba39;
+            text-shadow: 2px 2px 6px rgba(44,204,64,0.3), 0 2px 8px #ccc;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-size: 2rem;
+            margin: 0 0 32px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 18px;
+            margin-bottom: 6px;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+        .submit-btn {
+            background: #28ba39;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 40px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-top: 24px;
+            cursor: pointer;
+            display: block;
+            margin-left: auto;
+        }
+        .submit-btn:hover {
+            background: #219a2e;
+        }
+        .voltar-btn {
+            position: fixed;
+            right: 32px;
+            top: 32px;
+            background: #db8504;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-weight: bold;
+            box-shadow: 2px 2px 10px rgba(255,152,0,0.2);
+            cursor: pointer;
+            z-index: 1000;
+            transition: background 0.2s;
+        }
+        .voltar-btn:hover {
+            background: #fb8c00;
+        }
+        select[multiple] {
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <button class="voltar-btn" onclick="history.back()">Voltar</button>
+    <div class="container">
+        <h1>Editar Usuário</h1>
+        {% if erro %}
+            <div style="color:red; font-weight:bold; margin-bottom:16px;">{{ erro }}</div>
+        {% endif %}
+        <form method="post" autocomplete="off">
+            <label for="nome">Nome</label>
+            <input type="text" id="nome" name="nome" value="{{ usuario['nome'] }}" required>
+            <label for="login">Login</label>
+            <input type="text" id="login" name="login" value="{{ usuario['login'] }}" required>
+            <label for="senha">Senha</label>
+            <input type="password" id="senha" name="senha" placeholder="Deixe em branco para não alterar">
+            <label for="perfil">Perfil</label>
+            <select id="perfil" name="perfil" required>
+                <option value="Administrador" {% if usuario['perfil'] == 'Administrador' %}selected{% endif %}>Administrador</option>
+                <option value="Gerente" {% if usuario['perfil'] == 'Gerente' %}selected{% endif %}>Gerente</option>
+                <option value="Preposto" {% if usuario['perfil'] == 'Preposto' %}selected{% endif %}>Preposto</option>
+            </select>
+            <label for="cooperativas" style="font-weight:bold;">Cooperativas</label>
+            <select id="cooperativas" style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;margin-bottom:12px;">
+                <option value="">Selecione...</option>
+                {% for coop in cooperativas %}
+                    <option value="{{ coop.id }}">{{ coop.nome_fantasia }} - {{ coop.categoria }}</option>
+                {% endfor %}
+            </select>
+            <button type="button" onclick="addCooperativa()" style="margin-top:8px;padding:8px 16px;background:#28ba39;color:#fff;border:none;border-radius:6px;cursor:pointer;">Adicionar Cooperativa</button>
+            <ul id="cooperativa-list" style="margin-top:12px;padding:0;list-style:none;font-size:0.9rem;color:#555;">
+                {% for coop_id in usuario_cooperativas %}
+                    {% set coop = cooperativas | selectattr('id', 'equalto', coop_id) | first %}
+                    {% if coop %}
+                    <li id="cooperativa-{{ coop_id }}" style="margin-bottom:8px;">
+                        {{ coop.nome_fantasia }} - {{ coop.categoria }}
+                        <button type="button" onclick="removeCooperativa('{{ coop_id }}')" style="margin-left:8px;padding:4px 8px;background:#c0392b;color:#fff;border:none;border-radius:4px;cursor:pointer;">Excluir</button>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+            <input type="hidden" id="cooperativas-hidden" name="cooperativas" value="{{ usuario['cooperativas'] }}">
+            <button type="submit" class="submit-btn">Salvar</button>
+        </form>
+    </div>
+    <script>
+        function addCooperativa() {
+            const select = document.getElementById('cooperativas');
+            const cooperativaList = document.getElementById('cooperativa-list');
+            const hiddenInput = document.getElementById('cooperativas-hidden');
+            const selectedOption = select.options[select.selectedIndex];
+
+            if (selectedOption.value && !document.getElementById(`cooperativa-${selectedOption.value}`)) {
+                const li = document.createElement('li');
+                li.id = `cooperativa-${selectedOption.value}`;
+                li.style.marginBottom = '8px';
+                li.innerHTML = `${selectedOption.text} <button type="button" onclick="removeCooperativa('${selectedOption.value}')" style="margin-left:8px;padding:4px 8px;background:#c0392b;color:#fff;border:none;border-radius:4px;cursor:pointer;">Excluir</button>`;
+                cooperativaList.appendChild(li);
+
+                const currentValues = hiddenInput.value ? hiddenInput.value.split(',') : [];
+                currentValues.push(selectedOption.value);
+                hiddenInput.value = currentValues.join(',');
+            }
+        }
+
+        function removeCooperativa(value) {
+            const li = document.getElementById(`cooperativa-${value}`);
+            const hiddenInput = document.getElementById('cooperativas-hidden');
+            if (li) {
+                li.remove();
+                const currentValues = hiddenInput.value.split(',');
+                hiddenInput.value = currentValues.filter(v => v !== value).join(',');
+            }
+        }
+    </script>
+</body>
+</html>

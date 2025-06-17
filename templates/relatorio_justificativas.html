@@ -1,0 +1,140 @@
+<!-- filepath: c:\Users\hm\Documents\PROJETOS\JUSTIFICATIVA COOPERATIVA\templates\relatorio_justificativas.html -->
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório de Justificativas</title>
+    <style>
+        @media print {
+            .page-break { page-break-before: always; }
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        .justificativa-page {
+            max-width: 900px;
+            margin: 40px auto 0 auto;
+            padding: 32px 40px 32px 40px;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 12px;
+            box-sizing: border-box;
+        }
+        h2 {
+            color: #28ba39;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 24px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 18px;
+            margin-bottom: 6px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+            margin-bottom: 8px;
+            background: #f4f4f4;
+        }
+        textarea {
+            min-height: 60px;
+            resize: none;
+        }
+        .img-page {
+            max-width: 900px;
+            margin: 40px auto 0 auto;
+            padding: 32px 40px 32px 40px;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 12px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .img-page img, .img-page embed {
+            max-width: 100%;
+            max-height: 900px;
+            margin: 0 auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    {% for j in justificativas %}
+    <div class="justificativa-page">
+        <!-- Linha 1: Logo centralizada -->
+        <div style="display:flex;justify-content:center;align-items:center;margin-bottom:12px;">
+            <div style="display:flex;align-items:center;min-width:180px;min-height:80px;max-width:220px;max-height:100px;">
+                <img src="{% if j['logo_url'] %}{{ '/static/logos/' ~ j['logo_url'] if not j['logo_url'].startswith('/') else j['logo_url'] }}{% else %}/static/logos/default.png{% endif %}" alt="Logo" style="height:auto;max-height:100px;max-width:220px;border-radius:8px;border:1px solid #eee;background:#fff;object-fit:contain;display:block;">
+            </div>
+        </div>
+        <!-- Linha 2: Cooperativa e Categoria Profissional -->
+        <div style="display:flex;gap:24px;margin-bottom:12px;">
+            <div style="flex:1;">
+                <label>Cooperativa</label>
+                <input type="text" value="{{ j['nome_fantasia'] if j['nome_fantasia'] else '' }}" readonly>
+            </div>
+            <div style="flex:1;">
+                <label>Categoria Profissional</label>
+                <input type="text" value="{{ j['categoria_profissional'] }}" readonly>
+            </div>
+        </div>
+        <!-- Linha 3: Matrícula e Nome -->
+        <div style="display:flex;gap:24px;margin-bottom:12px;">
+            <div style="flex:1;">
+                <label>Matrícula</label>
+                <input type="text" value="{{ j['matricula'] }}" readonly>
+            </div>
+            <div style="flex:2;">
+                <label>Nome</label>
+                <input type="text" value="{{ j['nome_completo'] }}" readonly>
+            </div>
+        </div>
+        <!-- Linha 4: Data Ocorrência, Início Plantão, Fim Plantão -->
+        <div style="display:flex;gap:24px;margin-bottom:12px;">
+            <div style="flex:1;">
+                <label>Data Ocorrência</label>
+                <input type="text" value="{{ j['data_ocorrencia'] }}" readonly>
+            </div>
+            <div style="flex:1;">
+                <label>Início Plantão</label>
+                <input type="text" value="{{ j['inicio_plantao'] }}" readonly>
+            </div>
+            <div style="flex:1;">
+                <label>Fim Plantão</label>
+                <input type="text" value="{{ j['fim_plantao'] }}" readonly>
+            </div>
+        </div>
+        <!-- Linha 5: Justificativa -->
+        <div style="margin-bottom:12px;">
+            <label>Justificativa</label>
+            <textarea readonly>{{ j['justificativa'] }}</textarea>
+        </div>
+        
+    </div>
+    {% if j['ocorrencia_arquivo'] %}
+    <div class="img-page page-break">
+        <h2>Arquivo da Ocorrência</h2>
+        {% if j['ocorrencia_arquivo'].endswith('.pdf') %}
+            <embed src="{{ url_for('static', filename='ocorrencias/' ~ j['ocorrencia_arquivo']) }}" type="application/pdf" width="100%" height="800px" />
+        {% else %}
+            <img src="{{ url_for('static', filename='ocorrencias/' ~ j['ocorrencia_arquivo']) }}" alt="Ocorrência">
+        {% endif %}
+    </div>
+    {% endif %}
+    <div class="page-break"></div>
+    {% endfor %}
+    {% if justificativas|length == 0 %}
+    <div style="text-align:center; color:#c0392b; font-size:1.3rem; margin-top:60px;">
+        Nenhuma justificativa encontrada para o período selecionado.
+    </div>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Visualizar Justificativa</title>
+    <style>
+        body {
+            background: #fff;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            border: 2px solid #ccc;
+            border-radius: 12px;
+            box-sizing: border-box;
+        }
+        .container {
+            padding: 40px 60px 40px 60px;
+            max-width: 600px;
+            margin: 40px auto;
+            background: #fff;
+        }
+        h1 {
+            color: #28ba39;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 24px;
+            text-shadow: 2px 2px 6px rgba(44,204,64,0.3),0 2px 8px #ccc;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 18px;
+            margin-bottom: 6px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+            margin-bottom: 8px;
+            background: #f4f4f4;
+        }
+        textarea {
+            min-height: 60px;
+            resize: none;
+        }
+        .voltar-btn {
+            position: fixed;
+            right: 32px;
+            top: 32px;
+            background: #db8504;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-weight: bold;
+            box-shadow: 2px 2px 10px rgba(255,152,0,0.2);
+            cursor: pointer;
+            z-index: 1000;
+            transition: background 0.2s;
+        }
+        .voltar-btn:hover {
+            background: #c97c04;
+        }
+        .justificativa-dados {
+            max-width: 700px;
+            margin: 40px auto 0 auto;
+            padding: 32px 40px 32px 40px;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 12px;
+            box-sizing: border-box;
+        }
+        .justificativa-dados h2 {
+            color: #28ba39;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 24px;
+        }
+        .justificativa-dados label {
+            font-weight: bold;
+            display: block;
+            margin-top: 18px;
+            margin-bottom: 6px;
+        }
+        .justificativa-dados input, .justificativa-dados textarea {
+            width: 100%;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+            margin-bottom: 8px;
+            background: #f4f4f4;
+        }
+        .justificativa-dados textarea {
+            min-height: 60px;
+            resize: none;
+        }
+    </style>
+</head>
+<body>
+    <button class="voltar-btn" onclick="window.close()">Fechar</button>
+    <div class="container">
+        <h1>Visualizar Justificativa</h1>
+        <div class="justificativa-dados" style="max-width:700px;margin:40px auto 0 auto;padding:32px 40px 32px 40px;background:#fff;border:1px solid #ccc;border-radius:12px;box-sizing:border-box;">
+            <!-- Linha 1: Logo centralizada -->
+            <div style="display:flex;justify-content:center;align-items:center;margin-bottom:12px;">
+                <div style="display:flex;align-items:center;min-width:120px;min-height:48px;max-width:180px;max-height:80px;">
+                    <img src="{{ url_for('static', filename='logos/' + (logo_url if logo_url else 'default.png')) }}" 
+                         alt="Logo da Cooperativa" 
+                         style="height:auto;max-height:80px;max-width:180px;border-radius:8px;border:1px solid #eee;background:#fff;object-fit:contain;display:block;">
+                </div>
+            </div>
+            <!-- Linha 1.1: Data do Preenchimento -->
+            <div style="display:flex;justify-content:center;align-items:center;margin-bottom:12px;">
+                <div style="flex:1;text-align:center;">
+                    <label style="font-weight:bold;">Data do Preenchimento</label>
+                    <input type="text" value="{{ justificativa['datahora_preenchimento'] }}" readonly style="width:50%;padding:8px;border-radius:6px;border:1px solid #ccc;background:#f4f4f4;">
+                </div>
+            </div>
+            <!-- Linha 2: Cooperativa e Categoria Profissional -->
+            <div style="display:flex;gap:24px;margin-bottom:12px;">
+                <div style="flex:1;">
+                    <label style="font-weight:bold;">Cooperativa</label>
+                    <input type="text" value="{{ nome_fantasia }}" readonly style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;background:#f4f4f4;">
+                </div>
+                <div style="flex:1;">
+                    <label style="font-weight:bold;">Categoria Profissional</label>
+                    <input type="text" value="{{ justificativa['categoria_profissional'] }}" readonly style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;background:#f4f4f4;">
+                </div>
+            </div>
+            <!-- Linha 3: Matrícula e Nome -->
+            <div style="display:flex;gap:24px;margin-bottom:12px;">
+                <div style="flex:1;">
+                    <label style="font-weight:bold;">Matrícula</label>
+                    <input type="text" value="{{ justificativa['matricula'] }}" readonly style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;background:#f4f4f4;">
+                </div>
+                <div style="flex:2;">
+                    <label style="font-weight:bold;">Nome</label>
+                    <input type="text" value="{{ justificativa['nome_completo'] }}" readonly style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;background:#f4f4f4;">
+                </div>
+            </div>
+            <!-- Linha 3: Data Ocorrência, Início Plantão, Fim Plantão -->
+            <div style="display:flex;gap:24px;margin-bottom:12px;">
+                <div style="flex:1;">
+                    <label style="font-weight:bold;">Data Ocorrência</label>
+                    <input type="text" value="{{ justificativa['data_ocorrencia'] }}" readonly style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;background:#f4f4f4;">
+                </div>
+                <div style="flex:1;">
+                    <label style="font-weight:bold;">Início Plantão</label>
+                    <input type="text" value="{{ justificativa['inicio_plantao'] }}" readonly style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;background:#f4f4f4;">
+                </div>
+                <div style="flex:1;">
+                    <label style="font-weight:bold;">Fim Plantão</label>
+                    <input type="text" value="{{ justificativa['fim_plantao'] }}" readonly style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;background:#f4f4f4;">
+                </div>
+            </div>
+            <!-- Linha 4: Justificativa -->
+            <div style="margin-bottom:12px;">
+                <label style="font-weight:bold;">Justificativa</label>
+                <textarea readonly style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;background:#f4f4f4;min-height:60px;resize:none;">{{ justificativa['justificativa'] }}</textarea>
+            </div>
+            <!-- Linha 5: Status centralizado -->
+            <div style="margin-bottom:12px;text-align:center;">
+                {% if justificativa['autorizacao'] == 1 %}
+                    <span style="color:#28ba39;font-weight:bold;font-size:1.2rem;">Autorizado</span>
+                {% elif justificativa['autorizacao'] == 0 %}
+                    <span style="color:#c0392b;font-weight:bold;font-size:1.2rem;">Negado</span>
+                {% else %}
+                    <span style="color:#888;font-weight:bold;font-size:1.2rem;">Pendente</span>
+                {% endif %}
+            </div>
+            <!-- Linha 6: Justificativa da Negação -->
+            {% if justificativa['justificativa_negada'] %}
+            <div style="margin-bottom:12px;">
+                <label style="font-weight:bold;">Justificativa da Negação</label>
+                <textarea readonly style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;background:#f4f4f4;min-height:40px;resize:none;">{{ justificativa['justificativa_negada'] }}</textarea>
+            </div>
+            {% endif %}
+            <!-- Arquivo da Ocorrência -->
+            {% if justificativa['ocorrencia_arquivo'] %}
+            <div style="margin-top:24px;">
+                <label style="font-weight:bold;">Arquivo da Ocorrência</label><br>
+                {% if justificativa['ocorrencia_arquivo'].endswith('.pdf') %}
+                    <embed src="{{ url_for('static', filename='ocorrencias/' ~ justificativa['ocorrencia_arquivo']) }}" type="application/pdf" width="100%" height="600px" />
+                {% else %}
+                    <img src="{{ url_for('static', filename='ocorrencias/' ~ justificativa['ocorrencia_arquivo']) }}" alt="Ocorrência" style="max-width:100%;max-height:400px;">
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <script>
+        function reautorizarJustificativa(id, button) {
+            fetch(`/reatorizar_justificativa/${id}`, {method: 'POST'})
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao reautorizar justificativa.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Update the status to "Autorizado"
+                        const statusElement = button.previousElementSibling;
+                        statusElement.textContent = 'Autorizado';
+                        statusElement.style.color = '#28ba39';
+                        statusElement.style.fontWeight = 'bold';
+                        // Remove the "Reautorizar" button
+                        button.remove();
+                    } else {
+                        alert(data.message || 'Erro ao reautorizar justificativa.');
+                    }
+                })
+                .catch(error => {
+                    alert(error.message || 'Erro ao conectar ao servidor.');
+                });
+        }
+    </script>
+</body>
+</html>
